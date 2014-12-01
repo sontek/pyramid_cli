@@ -1,4 +1,19 @@
-tomb_auth
-=============
+pyramid_cli
+===========
 
-User registration and login system for the Pyramid Web Framework.
+Command line utility for working with Pyramid
+
+Getting Started
+==================
+
+View routes:
+
+.. code-block:: bash
+
+    pyramid development.ini routes
+
+View Tweens:
+
+.. code-block:: bash
+
+    pyramid development.ini tweens
