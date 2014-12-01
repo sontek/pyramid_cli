@@ -5,7 +5,7 @@ from pyramid.interfaces import IViewClassifier
 from pyramid.interfaces import IView
 from pyramid.static import static_view
 from zope.interface import Interface
-
+from collections import OrderedDict
 
 PAD = 3
 ANY_KEY = '*'
@@ -86,7 +86,7 @@ def _get_view_module(view_callable):
     # that is currently returned as pyramid.router.decorator, lets
     # hack a nice name in:
     if view_module == 'pyramid.router.decorator':
-        view_module = 'wsgiapp'
+        view_module = '<wsgiapp>'
 
     return view_module
 
@@ -102,7 +102,7 @@ def get_route_data(route, registry):
         name=route.name
     )
     route_request_methods = None
-    view_request_methods = {}
+    view_request_methods = OrderedDict()
     view_callable = None
 
     route_intr = registry.introspector.get(
