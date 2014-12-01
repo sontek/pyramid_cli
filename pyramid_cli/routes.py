@@ -3,6 +3,7 @@ from pyramid.config import Configurator
 from pyramid.interfaces import IRouteRequest
 from pyramid.interfaces import IViewClassifier
 from pyramid.interfaces import IView
+from pyramid.static import static_view
 from zope.interface import Interface
 
 
@@ -55,8 +56,25 @@ def _get_view_module(view_callable):
         return UNKNOWN_KEY
 
     if hasattr(view_callable, '__name__'):
-        view_name = view_callable.__name__
+        if hasattr(view_callable, '__original_view__'):
+            original_view = view_callable.__original_view__
+        else:
+            original_view = None
+
+        if isinstance(original_view, static_view):
+            if original_view.package_name is not None:
+                return '%s:%s' % (
+                    original_view.package_name,
+                    original_view.docroot
+                )
+            else:
+                return original_view.docroot
+        else:
+            view_name = view_callable.__name__
     else:
+        # Currently only MultiView hits this,
+        # we could just not run _get_view_module
+        # for them and remove this logic
         view_name = str(view_callable)
 
     view_module = '%s.%s' % (

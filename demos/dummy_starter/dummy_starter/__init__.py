@@ -6,6 +6,11 @@ def main(global_config, **settings):
     """
     config = Configurator(settings=settings)
     config.add_static_view('static', 'static', cache_max_age=3600)
+    config.add_static_view(name='static2', path='/var/www/static')
+    config.add_static_view(
+        name='pdt_images',
+        path='pyramid_debugtoolbar:static/img/'
+    )
     config.add_route('a', '')
     config.add_route('no_view_attached', '/')
     config.add_route('route_and_view_attached', '/')
