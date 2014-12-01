@@ -136,8 +136,12 @@ def get_route_data(route, registry):
 
         if view_intr:
             for view in view_intr:
-                request_method = view.get('request_methods')
+                # We don't want to run through root factories and other
+                # related introspectors
+                if view.category_name != 'views':
+                    continue
 
+                request_method = view.get('request_methods')
                 view_callable = view['callable']
                 view_module = _get_view_module(view_callable, view)
 

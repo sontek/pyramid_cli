@@ -1,4 +1,15 @@
 from pyramid.config import Configurator
+from pyramid.security import Authenticated
+from pyramid.security import Allow
+
+
+class RootContext(object):
+    def __init__(self, request):
+        self.request = request
+
+    @property
+    def __acl__(self):
+        return [(Allow, Authenticated, 'authenticated')]
 
 
 def main(global_config, **settings):
@@ -87,6 +98,17 @@ def main(global_config, **settings):
         attr='awesome',
         route_name='class_based_view',
         request_method='POST'
+    )
+
+    config.add_route(
+        'factory',
+        '/factory',
+        factory=RootContext,
+    )
+
+    config.add_view(
+        'dummy_starter.standard_views.route_and_view_attached',
+        route_name='factory',
     )
 
     config.scan()
