@@ -31,12 +31,16 @@ method_conflicts           /conflicts                  dummy_starter.standard_vi
 multiview                  /multiview                  dummy_starter.standard_views.route_and_view_attached    PATCH,GET
 multiview                  /multiview                  dummy_starter.standard_views.hello_world                POST
 class_based_view           /classes                    dummy_starter.standard_views.ClassBasedView.awesome     POST
+factory                    /factory                    dummy_starter.standard_views.route_and_view_attached    *
 """  # noqa
     assert result.exit_code == 0
-    final_output = result.output.split('\n')
+    final_lines = result.output.split('\n')
+    expected_lines = expected_output.split('\n')
 
-    for line_index, line in enumerate(expected_output.split('\n')):
-        columns = final_output[line_index].strip().split()
+    assert len(final_lines) == len(expected_lines), "We expect to have the same set of routes"
+
+    for line_index, line in enumerate(expected_lines):
+        columns = final_lines[line_index].strip().split()
         for col_index, column in enumerate(line.strip().split()):
             # Skip the separator
             if '-------' in column:
