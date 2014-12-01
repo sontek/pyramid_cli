@@ -37,7 +37,8 @@ factory                    /factory                    dummy_starter.standard_vi
     final_lines = result.output.split('\n')
     expected_lines = expected_output.split('\n')
 
-    assert len(final_lines) == len(expected_lines), "We expect to have the same set of routes"
+    error_msg = "We expect to have the same set of routes"
+    assert len(final_lines) == len(expected_lines), error_msg
 
     for line_index, line in enumerate(expected_lines):
         columns = final_lines[line_index].strip().split()

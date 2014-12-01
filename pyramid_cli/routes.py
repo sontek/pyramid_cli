@@ -50,6 +50,7 @@ def _get_request_methods(route_request_methods, view_request_methods):
 
     return request_methods
 
+
 def _get_static_view(view_callable):
     if hasattr(view_callable, '__original_view__'):
         original_view = view_callable.__original_view__
@@ -58,6 +59,7 @@ def _get_static_view(view_callable):
 
     if isinstance(original_view, static_view):
         return original_view
+
 
 def _get_view_module(view_callable, view_intr=None):
     if view_callable is None:
