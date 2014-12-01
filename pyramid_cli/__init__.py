@@ -1,6 +1,7 @@
 import click
 from pyramid.paster import bootstrap
 from .tweens import tweens_cli
+from .routes import routes_cli
 
 
 def get_pyramid_env(config_uri):
@@ -22,3 +23,4 @@ def cli(ctx, config_uri):
     return ctx
 
 cli.add_command(tweens_cli, name='tweens')
+cli.add_command(routes_cli, name='routes')

@@ -4,7 +4,7 @@ from click.testing import CliRunner
 from tests.utils import get_demo_path
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_core_empty():
     from pyramid_cli import cli
 
@@ -19,7 +19,7 @@ def test_core_empty():
     assert result.exit_code == 2
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_core_help():
     from pyramid_cli import cli
 

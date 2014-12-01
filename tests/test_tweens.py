@@ -4,7 +4,7 @@ from click.testing import CliRunner
 from tests.utils import get_demo_path
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_basic_tween():
     from pyramid_cli import cli
 
@@ -33,7 +33,7 @@ Position    Name
         assert line.strip() == final_output[index].strip()
 
 
-@pytest.mark.unit
+@pytest.mark.integration
 def test_basic_explicit_tween():
     from pyramid_cli import cli
 
