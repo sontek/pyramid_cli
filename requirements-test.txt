@@ -4,3 +4,5 @@ pytest
 pytest-cov
 pytest-xdist
 tox
+
+-e demos/dummy_starter
