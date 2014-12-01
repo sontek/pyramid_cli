@@ -77,5 +77,17 @@ def main(global_config, **settings):
         request_method='POST'
     )
 
+    config.add_route(
+        'class_based_view',
+        '/classes',
+    )
+
+    config.add_view(
+        'dummy_starter.standard_views.ClassBasedView',
+        attr='awesome',
+        route_name='class_based_view',
+        request_method='POST'
+    )
+
     config.scan()
     return config.make_wsgi_app()

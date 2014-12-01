@@ -50,27 +50,31 @@ def _get_request_methods(route_request_methods, view_request_methods):
 
     return request_methods
 
+def _get_static_view(view_callable):
+    if hasattr(view_callable, '__original_view__'):
+        original_view = view_callable.__original_view__
+    else:
+        original_view = view_callable
 
-def _get_view_module(view_callable):
+    if isinstance(original_view, static_view):
+        return original_view
+
+def _get_view_module(view_callable, view_intr=None):
     if view_callable is None:
         return UNKNOWN_KEY
 
-    if hasattr(view_callable, '__name__'):
-        if hasattr(view_callable, '__original_view__'):
-            original_view = view_callable.__original_view__
+    static_view_callable = _get_static_view(view_callable)
+    if static_view_callable is not None:
+        if static_view_callable.package_name is not None:
+            return '%s:%s' % (
+                static_view_callable.package_name,
+                static_view_callable.docroot
+            )
         else:
-            original_view = None
+            return static_view_callable.docroot
 
-        if isinstance(original_view, static_view):
-            if original_view.package_name is not None:
-                return '%s:%s' % (
-                    original_view.package_name,
-                    original_view.docroot
-                )
-            else:
-                return original_view.docroot
-        else:
-            view_name = view_callable.__name__
+    if hasattr(view_callable, '__name__'):
+        view_name = view_callable.__name__
     else:
         # Currently only MultiView hits this,
         # we could just not run _get_view_module
@@ -81,6 +85,10 @@ def _get_view_module(view_callable):
         view_callable.__module__,
         view_name,
     )
+
+    if view_intr is not None:
+        if view_intr.get('attr') is not None:
+            view_module = '%s.%s' % (view_module, view_intr['attr'])
 
     # If pyramid wraps something in wsgiapp or wsgiapp2 decorators
     # that is currently returned as pyramid.router.decorator, lets
@@ -116,6 +124,7 @@ def get_route_data(route, registry):
         default=None
     )
     view_module = _get_view_module(view_callable)
+
     # Introspectables can be turned off, so there could be a chance
     # that we have no `route_intr` but we do have a route + callable
     if route_intr is None:
@@ -129,10 +138,10 @@ def get_route_data(route, registry):
             for view in view_intr:
                 request_method = view.get('request_methods')
 
-                if request_method is not None:
-                    view_callable = view['callable']
-                    view_module = _get_view_module(view_callable)
+                view_callable = view['callable']
+                view_module = _get_view_module(view_callable, view)
 
+                if request_method is not None:
                     if view_module not in view_request_methods:
                         view_request_methods[view_module] = []
 
@@ -178,10 +187,7 @@ def routes_cli(ctx):
 
     routes = mapper.get_routes()
 
-    mapped_routes = [
-        ('Name', 'Pattern', 'View', 'Method'),
-        ('----', '-------', '----', '------')
-    ]
+    mapped_routes = []
 
     for route in routes:
         route_data = get_route_data(route, registry)
@@ -202,6 +208,14 @@ def routes_cli(ctx):
             mapped_routes.append((name, pattern, view, method))
 
     fmt = _get_print_format(max_name, max_pattern, max_view, max_method)
+
+    click.echo(fmt % ('Name', 'Pattern', 'View', 'Method'))
+    click.echo(fmt % (
+        '-' * max_name,
+        '-' * max_pattern,
+        '-' * max_view,
+        '-' * max_method
+    ))
 
     for route in mapped_routes:
         click.echo(fmt % route)
