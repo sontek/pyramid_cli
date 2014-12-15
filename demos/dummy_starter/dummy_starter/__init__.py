@@ -1,6 +1,7 @@
 from pyramid.config import Configurator
 from pyramid.security import Authenticated
 from pyramid.security import Allow
+from pyramid.config import not_
 
 
 class RootContext(object):
@@ -109,6 +110,30 @@ def main(global_config, **settings):
     config.add_view(
         'dummy_starter.standard_views.route_and_view_attached',
         route_name='factory',
+    )
+
+
+    config.add_route(
+        'not_post',
+        '/not_post',
+    )
+
+    config.add_view(
+        'dummy_starter.standard_views.route_and_view_attached',
+        route_name='not_post',
+        request_method=not_('POST'),
+    )
+
+    config.add_route(
+        'not_post_only_get',
+        '/not_post_only_get',
+        request_method=('POST', 'GET'),
+    )
+
+    config.add_view(
+        'dummy_starter.standard_views.route_and_view_attached',
+        route_name='not_post_only_get',
+        request_method=not_('POST'),
     )
 
     config.scan()
